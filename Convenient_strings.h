@@ -8,12 +8,42 @@ private:
     int len;
 
 public:
-    TString(int l = 0);
-    TString(const TString& other);
-    TString(const char* str);
+    TString(int l = 0) : len{l} {
+        s = new char[len];
+    }
+
+    TString(const TString& other) : len{other.len} {
+        
+        s = new char[len];
+        
+    }
+    // Shoud I implement the extending buffer functional ?
+    TString(const char* str) {
+       
+        len = sizeof(str);
+        if (s == nullptr) {
+            s = new char[len];
+            for (int i = 0; i < len; ++i) {
+                s[i] = str[i];
+            }
+            s[len] = '\0';
+        }
+        else {
+            delete[] s;
+            s = new char[len];
+            for (int i = 0; i < len; ++i) {
+                s[i] = str[i];
+            }
+            s[len] = '\0';
+        }
+    }
     
     ~TString() {
         delete[] s;
+    }
+
+    int size() { 
+        return sizeof(s);
     }
 
     operator char*() const {
