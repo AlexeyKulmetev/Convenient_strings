@@ -1,70 +1,125 @@
 #include <iostream>
 #include <cstddef>
-
+#include <cstring>
 
 class TString {
 private:
-    char *s = nullptr;
-    int len;
+    char *S = nullptr;
+    int Len;
 
 public:
-    TString(int l = 0) : len{l} {
-        s = new char[len];
-    }
-
-    TString(const TString& other) : len{other.len} {
-        
-        s = new char[len];
-        
-    }
-    // Shoud I implement the extending buffer functional ?
-    TString(const char* str) {
-       
-        len = sizeof(str);
-        if (s == nullptr) {
-            s = new char[len];
-            for (int i = 0; i < len; ++i) {
-                s[i] = str[i];
+    TString(int len) {
+        Len = len;
+        if (len > 0) {
+            S = new char[len + 1];
+            *S = '\0';
+            if (nullptr == S) {
+                Len = 0;
             }
-            s[len] = '\0';
         }
         else {
-            delete[] s;
-            s = new char[len];
-            for (int i = 0; i < len; ++i) {
-                s[i] = str[i];
-            }
-            s[len] = '\0';
+            S = nullptr;
+            Len = 0;
         }
+    }
+
+    TString(const TString& other) : Len{other.Len} {
+        if (S != nullptr) {
+            delete[] S;
+        }
+        S = new char[other.Len + 1];
+        if (nullptr == S) {
+            Len = 0;
+        }
+        for (int i = 0; i < Len; ++i) {
+            S[i] = other.S[i];
+        }
+        S[Len] = '\0';
+    }
+
+    // // Shoud I implement the extending buffer functional ?
+
+    // it is assumed that the string has a terminating zero
+    TString(const char* str) {
+        if (S != nullptr) {
+            delete[] S;
+        }
+        Len = 0;
+        for (; str[Len] != '\0'; ++Len);
+        S = new char[Len + 1];
+        if (nullptr == S){
+            Len = 0;
+        }
+        else {
+            for (int i = 0; i < Len; ++i) {
+                S[i] = str[i];
+            }
+            S[Len] = '\0';            
+        }
+    }
+
+    TString(TString&& other) {
+        if (S != nullptr) {
+            delete[] S;
+        }
+        Len = other.Len;
+        S = new char[Len + 1];
+        if (nullptr == S) {
+            Len = 0;
+        }
+        for (int i = 0; i < Len; ++i) {
+            S[i] = other.S[i];
+        }
+        S[Len] = '\0';
+        delete[] other.S;
     }
     
     ~TString() {
-        delete[] s;
+        if (S != nullptr) {
+            delete[] S;
+            S = nullptr;
+        }
     }
 
-    int size() { 
-        return sizeof(s);
+    operator char*() const { // allow to usint TString object where char* is expected
+        return S;
     }
 
-    operator char*() const {
-        return s;
+    TString& operator = (TString&& other) {
+        if (this != &other) {
+            delete[] S;
+            S = new char[Len + 1];
+            for (int i = 0; i < Len; ++i) {
+                S[i] = other.S[i];
+            }
+            S[other.Len] = '\0';
+            delete[] other.S;
+        }
+        return *this;
     }
 
-    friend std::ostream& operator << (std::ostream& out, const TString& str);
+    friend std::ostream& operator << (std::ostream& out, const TString& str) {
+        if (str.S != nullptr) {
+            return out << str.S;
+        }
+        else {
+            return out;
+        }
+    }
 
-    TString& operator = (const TString str);
+    // TString& operator = (const TString str);
 
-    TString operator + (const TString& str);
+    // TString operator + (const TString& str);
 
-    bool operator == (const TString& str);
+    // bool operator == (const TString& str);
 
-    bool operator != (const TString& str);
+    // bool operator != (const TString& str);
 
-    bool operator < (const TString& str);
+    // bool operator < (const TString& str);
 
-    bool operator <= (const TString& str);
+    // bool operator <= (const TString& str);
 
-    bool operator > (const TString& str);
+    // bool operator > (const TString& str);
 
-    bool operator >= (const TString& str);
+    // bool operator >= (const TString& str);
 };
