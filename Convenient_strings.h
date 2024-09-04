@@ -26,9 +26,9 @@ public:
     }
 
     TString(const TString& other) : Len{other.Len} {
-        if (S != nullptr) {
-            delete[] S;
-        }
+        // if (S != nullptr) {
+        //     delete[] S;
+        // }
         S = new char[other.Len + 1];
         if (nullptr == S) {
             Len = 0;
@@ -39,14 +39,12 @@ public:
         S[Len] = '\0';
     }
 
-    // // Shoud I implement the extending buffer functional ?
-
     // it is assumed that the string has a terminating zero
     TString(const char* str) {
         if (str) {
-            if (S != nullptr) {
-                delete[] S;
-            }
+            // if (S != nullptr) {
+            //     delete[] S;
+            // }
             Len = 0;
             for (; str[Len] != '\0'; ++Len);
             S = new char[Len + 1];
@@ -63,9 +61,9 @@ public:
     }
 
     TString(TString&& other) {
-        if (S != nullptr) {
-            delete[] S;
-        }
+        // if (S != nullptr) {
+        //     delete[] S;
+        // }
         Len = other.Len;
         S = new char[Len + 1];
         if (nullptr == S) {
@@ -81,7 +79,7 @@ public:
     ~TString() {
         if (S != nullptr) {
             delete[] S;
-            S = nullptr;
+            // S = nullptr;
         }
     }
 
@@ -91,7 +89,9 @@ public:
 
     TString& operator = (TString&& other) {
         if (this != &other) {
-            delete[] S;
+            if (S != nullptr) {
+                delete[] S;
+            }
             S = new char[Len + 1];
             for (int i = 0; i < Len; ++i) {
                 S[i] = other.S[i];
@@ -104,7 +104,10 @@ public:
 
     TString& operator = (const TString& other) {
         if (this != &other) {
-            delete[] S;
+
+            if (S != nullptr) {
+                delete[] S;
+            }
             Len = other.Len;
             S = new char[Len + 1];
             if (S == nullptr) {
