@@ -43,20 +43,22 @@ public:
 
     // it is assumed that the string has a terminating zero
     TString(const char* str) {
-        if (S != nullptr) {
-            delete[] S;
-        }
-        Len = 0;
-        for (; str[Len] != '\0'; ++Len);
-        S = new char[Len + 1];
-        if (nullptr == S){
-            Len = 0;
-        }
-        else {
-            for (int i = 0; i < Len; ++i) {
-                S[i] = str[i];
+        if (str) {
+            if (S != nullptr) {
+                delete[] S;
             }
-            S[Len] = '\0';            
+            Len = 0;
+            for (; str[Len] != '\0'; ++Len);
+            S = new char[Len + 1];
+            if (nullptr == S){
+                Len = 0;
+            }
+            else {
+                for (int i = 0; i < Len; ++i) {
+                    S[i] = str[i];
+                }
+                S[Len] = '\0';            
+            }
         }
     }
 
@@ -100,6 +102,23 @@ public:
         return *this;
     }
 
+    TString& operator = (const TString& other) {
+        if (this != &other) {
+            delete[] S;
+            Len = other.Len;
+            S = new char[Len + 1];
+            if (S == nullptr) {
+                Len = 0;
+                return *this;
+            }
+            for (int i = 0; i < Len; ++i) {
+                S[i] = other.S[i];
+            }
+            S[Len] = '\0';
+        }
+        return *this;
+    }
+
     friend std::ostream& operator << (std::ostream& out, const TString& str) {
         if (str.S != nullptr) {
             return out << str.S;
@@ -109,52 +128,115 @@ public:
         }
     }
 
-    TString& operator = (const TString& str) {
-        if (this != &str) {
-            delete[] S;
-            Len = str.Len;
-            S = new char[Len + 1];
-            if (S == nullptr) {
-                Len = 0;
-                return *this;
-            }
-            for (int i = 0; i < Len; ++i) {
-                S[i] = str.S[i];
-            }
-            S[Len] = '\0';
-        }
-        return *this;
-    }
-
-    TString operator + (const TString& str) {
-        if (str.Len <= 0) {
+    TString operator + (const TString& other) const {
+        if (other.Len <= 0) {
             return *this;
         }
-        char* tmpS = new char[Len + str.Len + 1];
+        char* tmpS = new char[Len + other.Len + 1];
         if (nullptr == tmpS) {
             return *this;
         }
         for (int i = 0; i < Len; ++i) {
             tmpS[i] = S[i];
         }
-        for (int i = 0; i < str.Len; ++i) {
-            tmpS[Len + i] = str.S[i];
+        for (int i = 0; i < other.Len; ++i) {
+            tmpS[Len + i] = other.S[i];
         }
-        tmpS[Len + str.Len + 1] = '\0';
+        tmpS[Len + other.Len + 1] = '\0';
         TString result(tmpS);
-        delete tmpS;
+        delete[] tmpS;
         return result;
     }
 
-    // bool operator == (const TString& str);
+    bool operator == (const TString& other) const {
+        int i = 0;
+        while (other.S[i] != '\0' && S[i] != '\0' && i <= other.Len && i <= Len) {
+            if (S[i] != other.S[i]) {
+                return false;
+            }
+            ++i;
+        }
+        if (i == Len && i == other.Len) {
+            return true;
+        } 
+        else {
+            return false;
+        }
+    }
 
-    // bool operator != (const TString& str);
+    bool operator != (const TString& other) const {
+        int i = 0;
+        while (other.S[i] != '\0' && S[i] != '\0' && i <= other.Len && i <= Len) {
+            if (S[i] != other.S[i]) {
+                return true;
+            }
+            ++i;
+        }
+        if (i == Len && i == other.Len) {
+            return false;
+        }
+        else {
+            return true;
+        }
+    }
 
-    // bool operator < (const TString& str);
+    bool operator < (const TString& other) const {
+        for (int i = 0; S[i] != '\0', other.S[i] != '\0', i <= other.Len, i <= Len; ++i) {
+            if (S[i] < other.S[i]) {
+                return true;
+            }
+            if (S[i] > other.S[i]) {
+                return false;
+            }
+        }
+        if (Len < other.Len) {
+            return true;
+        }
+        return false;
+    }
 
-    // bool operator <= (const TString& str);
+    bool operator <= (const TString& other) const {
+        for (int i = 0; S[i] != '\0', other.S[i] != '\0', i <= other.Len, i <= Len; ++i) {
+            if (S[i] < other.S[i]) {
+                return true;
+            }
+            if (S[i] > other.S[i]) {
+                return false;
+            }
+        }
+        if (Len > other.Len) {
+            return false;
+        }
+        return true;
+    }
 
-    // bool operator > (const TString& str);
+    bool operator > (const TString& other) const {
+        for (int i = 0; S[i] != '\0', other.S[i] != '\0', i <= Len, i <= other.Len; ++i) {
+            if (S[i] > other.S[i]) {
+                return true;
+            }
+            if (S[i] < other.S[i]) {
+                return false;
+            }
+        }
+        if (Len > other.Len) {
+            return true;
+        }
+        return false;
+    }
 
-    // bool operator >= (const TString& str);
+    bool operator >= (const TString& other) const {
+        for (int i = 0; S[i] != '\0', other.S[i] != '\0', i <= other.Len, i <= Len; ++i) {
+            if (S[i] > other.S[i]) {
+                return true;
+            }
+            if (S[i] < other.S[i]) {
+                return false;
+            }
+            if (Len < other.Len) {
+                return false;
+            }
+            return true;
+        }
+    }
 };
