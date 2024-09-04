@@ -8,6 +8,8 @@ private:
     int Len;
 
 public:
+    TString() : Len{0}, S{nullptr} {}
+
     TString(int len) {
         Len = len;
         if (len > 0) {
@@ -107,9 +109,42 @@ public:
         }
     }
 
-    // TString& operator = (const TString str);
+    TString& operator = (const TString& str) {
+        if (this != &str) {
+            delete[] S;
+            Len = str.Len;
+            S = new char[Len + 1];
+            if (S == nullptr) {
+                Len = 0;
+                return *this;
+            }
+            for (int i = 0; i < Len; ++i) {
+                S[i] = str.S[i];
+            }
+            S[Len] = '\0';
+        }
+        return *this;
+    }
 
-    // TString operator + (const TString& str);
+    TString operator + (const TString& str) {
+        if (str.Len <= 0) {
+            return *this;
+        }
+        char* tmpS = new char[Len + str.Len + 1];
+        if (nullptr == tmpS) {
+            return *this;
+        }
+        for (int i = 0; i < Len; ++i) {
+            tmpS[i] = S[i];
+        }
+        for (int i = 0; i < str.Len; ++i) {
+            tmpS[Len + i] = str.S[i];
+        }
+        tmpS[Len + str.Len + 1] = '\0';
+        TString result(tmpS);
+        delete tmpS;
+        return result;
+    }
 
     // bool operator == (const TString& str);
 
