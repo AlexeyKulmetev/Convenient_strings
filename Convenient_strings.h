@@ -39,12 +39,9 @@ public:
         S[Len] = '\0';
     }
 
-    // it is assumed that the string has a terminating zero
+    // it is assumed that the str has a terminating zero
     TString(const char* str) {
         if (str) {
-            // if (S != nullptr) {
-            //     delete[] S;
-            // }
             Len = 0;
             for (; str[Len] != '\0'; ++Len);
             S = new char[Len + 1];
@@ -58,22 +55,15 @@ public:
                 S[Len] = '\0';            
             }
         }
+        else {
+            Len = 0;
+            S = nullptr;
+        }
     }
 
-    TString(TString&& other) {
-        // if (S != nullptr) {
-        //     delete[] S;
-        // }
-        Len = other.Len;
-        S = new char[Len + 1];
-        if (nullptr == S) {
-            Len = 0;
-        }
-        for (int i = 0; i < Len; ++i) {
-            S[i] = other.S[i];
-        }
-        S[Len] = '\0';
-        delete[] other.S;
+    TString(TString&& other) : S(other.S), Len(other.Len) {
+        other.S = nullptr;
+        other.Len = 0;
     }
     
     ~TString() {
@@ -92,12 +82,10 @@ public:
             if (S != nullptr) {
                 delete[] S;
             }
-            S = new char[Len + 1];
-            for (int i = 0; i < Len; ++i) {
-                S[i] = other.S[i];
-            }
-            S[other.Len] = '\0';
-            delete[] other.S;
+            S = other.S;
+            Len = other.Len;
+            other.S = nullptr;
+            other.Len = 0;
         }
         return *this;
     }
@@ -145,9 +133,9 @@ public:
         for (int i = 0; i < other.Len; ++i) {
             tmpS[Len + i] = other.S[i];
         }
-        tmpS[Len + other.Len + 1] = '\0';
+        tmpS[Len + other.Len] = '\0';
         TString result(tmpS);
-        delete[] tmpS;
+        delete tmpS;
         return result;
     }
 
