@@ -1,3 +1,6 @@
+#ifndef CONVENIENT_STRINGS_H
+#define CONVENIENT_STRINGS_H
+
 #include <iostream>
 #include <cstddef>
 #include <cstring>
@@ -231,3 +234,5 @@ public:
         }
     }
 };
+
+#endif
